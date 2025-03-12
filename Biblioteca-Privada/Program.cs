@@ -8,6 +8,9 @@ namespace Biblioteca_Privada
 {
     internal class Program
     {
-        
+        static void main(string[] args)
+        {
+
+        }
     }
 }
