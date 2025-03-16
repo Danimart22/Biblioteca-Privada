@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 public class Libro
 {
@@ -11,6 +7,12 @@ public class Libro
     private string Autor;
     private int precio;
     private int stock;
+    private int Year; // Keeping Year as requested
+
+    // Default constructor for deserialization
+    public Libro()
+    {
+    }
 
     public Libro(int ID, string Titulo, string Autor, int precio, int stock)
     {
@@ -50,6 +52,13 @@ public class Libro
         get => stock;
         set => stock = value;
     }
+
+    public int Year1
+    {
+        get => Year;
+        set => Year = value;
+    }
+
     public string getTitulo()
     {
         return Titulo;
@@ -69,6 +78,7 @@ public class Libro
     {
         return stock;
     }
+
     public void setStock(int nuevoStock)
     {
         stock = nuevoStock;
@@ -76,8 +86,19 @@ public class Libro
 
     public string ObtenerDetalles()
     {
-        return $"ID: {ID}, Título: {Titulo}, Autor: {Autor}, Precio: {precio}, Stock: {stock}";
+        return $"ID: {ID}, Título: {Titulo}, Autor: {Autor}, Precio: {precio}, Stock: {stock}, Año: {Year}";
     }
 
+    public override string ToString()
+    {
+        return ObtenerDetalles();
+    }
+
+    public string ToFileString()
+    {
+        return $"{ID},{Titulo},{Autor},{precio},{stock},{Year}";
+    }
 }
+
+
 

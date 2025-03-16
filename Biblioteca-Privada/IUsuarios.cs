@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Biblioteca_Privada
 {
-     public interface IUsuario
+    public interface IUsuario
     {
         void verLibros();
         Boolean verificarContraseña(string Contraseña);
