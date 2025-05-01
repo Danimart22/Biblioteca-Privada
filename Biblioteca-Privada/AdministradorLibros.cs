@@ -1,42 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using Biblioteca_Privada;
 
-public class AdministradorLibros
+public class AdministradorLibros : IAdministradorLibros
 {
-    private const string BooksFile = "books.txt";
-
     public void DisplayBooks()
     {
         Console.Clear();
         Console.WriteLine("=== LISTADO DE LIBROS ===");
 
-        if (File.Exists(BooksFile))
-        {
-            string[] bookLines = File.ReadAllLines(BooksFile);
+        List<Libro> books = Libro.GetAll();
 
-            if (bookLines.Length == 0)
-            {
-                Console.WriteLine("No hay libros registrados.");
-                return;
-            }
-
-            Console.WriteLine("ID | Título | Autor | Precio | Stock | Año");
-            Console.WriteLine("----------------------------------------");
-
-            foreach (string line in bookLines)
-            {
-                string[] bookData = line.Split(',');
-                if (bookData.Length >= 6)
-                {
-                    Console.WriteLine($"{bookData[0]} | {bookData[1]} | {bookData[2]} | ${bookData[3]} | {bookData[4]} | {bookData[5]}");
-                }
-            }
-        }
-        else
+        if (books.Count == 0)
         {
             Console.WriteLine("No hay libros registrados.");
+            return;
+        }
+
+        Console.WriteLine("ID | Título | Autor | Precio | Stock | Año");
+        Console.WriteLine("----------------------------------------");
+
+        foreach (Libro book in books)
+        {
+            Console.WriteLine($"{book.ID1} | {book.getTitulo()} | {book.getAutor()} | ${book.getPrecio()} | {book.getStock()} | {book.Year1}");
         }
     }
 
@@ -46,7 +33,7 @@ public class AdministradorLibros
         Console.WriteLine("=== AGREGAR LIBRO ===");
 
         // Generar ID nueva
-        int newId = GetNextId();
+        int newId = Libro.GetNextId();
 
         Console.Write("Título: ");
         string titulo = Console.ReadLine();
@@ -79,11 +66,8 @@ public class AdministradorLibros
         Libro newBook = new Libro(newId, titulo, autor, precio, stock);
         newBook.Year1 = year;
 
-        // Guardar libro en archivo
-        using (StreamWriter writer = File.AppendText(BooksFile))
-        {
-            writer.WriteLine(newBook.ToFileString());
-        }
+        // Guardar libro
+        newBook.Save();
 
         Console.WriteLine("\nLibro agregado exitosamente.");
         Console.WriteLine("Presione cualquier tecla para continuar...");
@@ -104,84 +88,10 @@ public class AdministradorLibros
             return;
         }
 
-        if (!File.Exists(BooksFile))
-        {
-            Console.WriteLine("No hay libros registrados.");
-            Console.WriteLine("Presione cualquier tecla para continuar...");
-            Console.ReadKey();
-            return;
-        }
+        // Buscar el libro por ID
+        Libro currentBook = Libro.GetById(id);
 
-        string[] bookLines = File.ReadAllLines(BooksFile);
-        List<string> updatedBooks = new List<string>();
-        bool bookFound = false;
-
-        foreach (string line in bookLines)
-        {
-            string[] bookData = line.Split(',');
-
-            if (bookData.Length >= 6 && int.Parse(bookData[0]) == id)
-            {
-                bookFound = true;
-                Libro currentBook = new Libro(
-                    int.Parse(bookData[0]),
-                    bookData[1],
-                    bookData[2],
-                    int.Parse(bookData[3]),
-                    int.Parse(bookData[4])
-                );
-                currentBook.Year1 = int.Parse(bookData[5]);
-
-                Console.WriteLine("\nInformación actual del libro:");
-                Console.WriteLine(currentBook.ObtenerDetalles());
-
-                Console.WriteLine("\nIngrese la nueva información (deje en blanco para mantener el valor actual):");
-
-                Console.Write($"Título [{currentBook.getTitulo()}]: ");
-                string newTitle = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(newTitle))
-                {
-                    currentBook.Titulo1 = newTitle;
-                }
-
-                Console.Write($"Autor [{currentBook.getAutor()}]: ");
-                string newAuthor = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(newAuthor))
-                {
-                    currentBook.Autor1 = newAuthor;
-                }
-
-                Console.Write($"Precio [{currentBook.getPrecio()}]: ");
-                string newPriceStr = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(newPriceStr) && int.TryParse(newPriceStr, out int newPrice))
-                {
-                    currentBook.Precio = newPrice;
-                }
-
-                Console.Write($"Stock [{currentBook.getStock()}]: ");
-                string newStockStr = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(newStockStr) && int.TryParse(newStockStr, out int newStock))
-                {
-                    currentBook.setStock(newStock);
-                }
-
-                Console.Write($"Año [{currentBook.Year1}]: ");
-                string newYearStr = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(newYearStr) && int.TryParse(newYearStr, out int newYear))
-                {
-                    currentBook.Year1 = newYear;
-                }
-
-                updatedBooks.Add(currentBook.ToFileString());
-                Console.WriteLine("\nLibro actualizado exitosamente.");
-            }
-            else
-            {
-                updatedBooks.Add(line);
-            }
-        }
-
-        if (!bookFound)
+        if (currentBook == null)
         {
             Console.WriteLine("No se encontró un libro con el ID especificado.");
             Console.WriteLine("Presione cualquier tecla para continuar...");
@@ -189,8 +99,50 @@ public class AdministradorLibros
             return;
         }
 
-        File.WriteAllLines(BooksFile, updatedBooks);
+        Console.WriteLine("\nInformación actual del libro:");
+        Console.WriteLine(currentBook.ObtenerDetalles());
 
+        Console.WriteLine("\nIngrese la nueva información (deje en blanco para mantener el valor actual):");
+
+        Console.Write($"Título [{currentBook.getTitulo()}]: ");
+        string newTitle = Console.ReadLine();
+        if (!string.IsNullOrWhiteSpace(newTitle))
+        {
+            currentBook.Titulo1 = newTitle;
+        }
+
+        Console.Write($"Autor [{currentBook.getAutor()}]: ");
+        string newAuthor = Console.ReadLine();
+        if (!string.IsNullOrWhiteSpace(newAuthor))
+        {
+            currentBook.Autor1 = newAuthor;
+        }
+
+        Console.Write($"Precio [{currentBook.getPrecio()}]: ");
+        string newPriceStr = Console.ReadLine();
+        if (!string.IsNullOrWhiteSpace(newPriceStr) && int.TryParse(newPriceStr, out int newPrice))
+        {
+            currentBook.Precio = newPrice;
+        }
+
+        Console.Write($"Stock [{currentBook.getStock()}]: ");
+        string newStockStr = Console.ReadLine();
+        if (!string.IsNullOrWhiteSpace(newStockStr) && int.TryParse(newStockStr, out int newStock))
+        {
+            currentBook.setStock(newStock);
+        }
+
+        Console.Write($"Año [{currentBook.Year1}]: ");
+        string newYearStr = Console.ReadLine();
+        if (!string.IsNullOrWhiteSpace(newYearStr) && int.TryParse(newYearStr, out int newYear))
+        {
+            currentBook.Year1 = newYear;
+        }
+
+        // Actualizar el libro
+        currentBook.Update();
+
+        Console.WriteLine("\nLibro actualizado exitosamente.");
         Console.WriteLine("Presione cualquier tecla para continuar...");
         Console.ReadKey();
     }
@@ -209,34 +161,10 @@ public class AdministradorLibros
             return;
         }
 
-        if (!File.Exists(BooksFile))
-        {
-            Console.WriteLine("No hay libros registrados.");
-            Console.WriteLine("Presione cualquier tecla para continuar...");
-            Console.ReadKey();
-            return;
-        }
+        // Buscar el libro por ID
+        Libro bookToDelete = Libro.GetById(id);
 
-        string[] bookLines = File.ReadAllLines(BooksFile);
-        List<string> remainingBooks = new List<string>();
-        bool bookFound = false;
-
-        foreach (string line in bookLines)
-        {
-            string[] bookData = line.Split(',');
-
-            if (bookData.Length >= 6 && int.Parse(bookData[0]) == id)
-            {
-                bookFound = true;
-                Console.WriteLine($"Libro eliminado: {bookData[1]} de {bookData[2]}");
-            }
-            else
-            {
-                remainingBooks.Add(line);
-            }
-        }
-
-        if (!bookFound)
+        if (bookToDelete == null)
         {
             Console.WriteLine("No se encontró un libro con el ID especificado.");
             Console.WriteLine("Presione cualquier tecla para continuar...");
@@ -244,43 +172,31 @@ public class AdministradorLibros
             return;
         }
 
-        File.WriteAllLines(BooksFile, remainingBooks);
+        Console.WriteLine($"Libro a eliminar: {bookToDelete.getTitulo()} de {bookToDelete.getAutor()}");
+        Console.Write("¿Está seguro de eliminar este libro? (S/N): ");
+        string confirmation = Console.ReadLine().ToUpper();
 
-        Console.WriteLine("Libro eliminado exitosamente.");
-        Console.WriteLine("Presione cualquier tecla para continuar...");
-        Console.ReadKey();
-    }
-
-    private int GetNextId()
-    {
-        if (!File.Exists(BooksFile))
+        if (confirmation == "S")
         {
-            return 1;
-        }
+            // Eliminar el libro
+            bool deleted = bookToDelete.Delete();
 
-        string[] bookLines = File.ReadAllLines(BooksFile);
-
-        if (bookLines.Length == 0)
-        {
-            return 1;
-        }
-
-        int maxId = 0;
-
-        foreach (string line in bookLines)
-        {
-            string[] bookData = line.Split(',');
-
-            if (bookData.Length >= 1 && int.TryParse(bookData[0], out int id))
+            if (deleted)
             {
-                if (id > maxId)
-                {
-                    maxId = id;
-                }
+                Console.WriteLine("Libro eliminado exitosamente.");
+            }
+            else
+            {
+                Console.WriteLine("No se pudo eliminar el libro.");
             }
         }
+        else
+        {
+            Console.WriteLine("Operación cancelada.");
+        }
 
-        return maxId + 1;
+        Console.WriteLine("Presione cualquier tecla para continuar...");
+        Console.ReadKey();
     }
 }
 

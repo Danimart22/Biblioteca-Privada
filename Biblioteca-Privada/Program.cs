@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Biblioteca_Privada;
 
 class Program
 {
@@ -14,7 +15,7 @@ class Program
     private static bool isAdmin = false;
 
     // Instancia del administrador de libros
-    private static AdministradorLibros bookManager = new AdministradorLibros();
+    private static IAdministradorLibros bookManager = new AdministradorLibros();
 
     static void Main(string[] args)
     {
