@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Biblioteca_Privada
+namespace Biblioteca_Privada.Entidades
 {
     internal class Pago
     {
@@ -22,7 +22,7 @@ namespace Biblioteca_Privada
             this.pedido = pedido;
             this.monto = monto;
             this.metodoPago = metodoPago;
-            this.fecha = DateTime.Now;
+            fecha = DateTime.Now;
             this.numeroTarjeta = numeroTarjeta;
         }
         public double getMonto() => monto;
