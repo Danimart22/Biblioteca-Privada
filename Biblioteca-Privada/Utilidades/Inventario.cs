@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Biblioteca_Privada
+namespace Biblioteca_Privada.Utilidades
 {
     internal class Inventario
     {

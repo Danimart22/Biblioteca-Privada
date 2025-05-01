@@ -14,8 +14,7 @@ class Program
     private static string currentUser = null;
     private static bool isAdmin = false;
 
-    // Instancia del administrador de libros
-    private static IAdministradorLibros bookManager = new AdministradorLibros();
+    // Instancia del administrador de libro
 
     static void Main(string[] args)
     {
@@ -66,17 +65,17 @@ class Program
                     switch (option)
                     {
                         case "1":
-                            bookManager.DisplayBooks();
+                     
                             CRUDLibros();
                             break;
                         case "2":
-                            bookManager.AddBook();
+                      
                             break;
                         case "3":
-                            bookManager.EditBook();
+                          
                             break;
                         case "4":
-                            bookManager.DeleteBook();
+                        
                             break;
                         case "5":
                             Logout();
@@ -91,7 +90,7 @@ class Program
                     switch (option)
                     {
                         case "1":
-                            bookManager.DisplayBooks();
+                      
                             Console.WriteLine("\nPresione cualquier tecla para continuar...");
                             Console.ReadKey();
                             break;
@@ -159,13 +158,13 @@ class Program
         switch (option)
         {
             case "1":
-                bookManager.EditBook();
+    
                 break;
             case "2":
-                bookManager.DeleteBook();
+
                 break;
             case "3":
-                bookManager.AddBook();
+
                 break;
             case "4":
                 return;

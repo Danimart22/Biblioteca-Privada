@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Biblioteca_Privada
+namespace Biblioteca_Privada.Entidades
 {
     internal class Cliente : IUsuario
     {
@@ -27,7 +27,7 @@ namespace Biblioteca_Privada
         {
 
         }
-        public Boolean verificarContraseña(string C)
+        public bool verificarContraseña(string C)
         {
             if (C.Equals(Clave))
             {
