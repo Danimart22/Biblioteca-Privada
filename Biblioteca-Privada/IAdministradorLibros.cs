@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Biblioteca_Privada
 {
-     public interface IUsuario
+    public interface IAdministradorLibros
     {
-        void verLibros();
-        Boolean verificarContraseña(string Contraseña);
-
+        void DisplayBooks();
+        void AddBook();
+        void EditBook();
+        void DeleteBook();
     }
 }
