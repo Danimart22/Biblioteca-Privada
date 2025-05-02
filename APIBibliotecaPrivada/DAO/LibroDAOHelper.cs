@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Biblioteca_Privada.DAO
+namespace APIBibliotecaPrivada.DAO
 {
     public class LibroDAOHelper
     {

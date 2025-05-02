@@ -1,0 +1,6 @@
+@APIBibliotecaPrivada_HostAddress = http://localhost:5002
+
+GET {{APIBibliotecaPrivada_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

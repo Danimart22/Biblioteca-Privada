@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Biblioteca-Privada", "Biblioteca-Privada\Biblioteca-Privada.csproj", "{CF462AC1-94BC-4672-A703-1CA9E5C37BAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca-Privada", "Biblioteca-Privada\Biblioteca-Privada.csproj", "{CF462AC1-94BC-4672-A703-1CA9E5C37BAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIBibliotecaPrivada", "APIBibliotecaPrivada\APIBibliotecaPrivada.csproj", "{A2C53147-DF54-471A-9286-3AE85FB8379B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{CF462AC1-94BC-4672-A703-1CA9E5C37BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF462AC1-94BC-4672-A703-1CA9E5C37BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF462AC1-94BC-4672-A703-1CA9E5C37BAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2C53147-DF54-471A-9286-3AE85FB8379B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2C53147-DF54-471A-9286-3AE85FB8379B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2C53147-DF54-471A-9286-3AE85FB8379B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2C53147-DF54-471A-9286-3AE85FB8379B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
