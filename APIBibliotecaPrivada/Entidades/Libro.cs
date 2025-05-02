@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-
+namespace APIBibliotecaPrivada.Entidades;
 public class Libro
 {
-    private const string BooksFile = "books.txt";
 
-    private int ID;
-    private string Titulo;
-    private string Autor;
-    private int precio;
-    private int stock;
-    private int Year;
-
-    // Constructor predeterminado
-    public Libro()
+    [Key]
+    public int ID { get; set; }
+    public string Titulo {  get; set; }
+    public string Autor {  get; set; }
+    public int precio {  get; set; }
+    public int stock {  get; set; }
+    public int Year {  get; set; }
+	private const string BooksFile = "books.txt";
+	// Constructor predeterminado
+	public Libro()
     {
     }
 

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-namespace Biblioteca_Privada.DAO
+using APIBibliotecaPrivada.Entidades;
+namespace APIBibliotecaPrivada.DAO
 {
     public interface ILibroDAO
     {
