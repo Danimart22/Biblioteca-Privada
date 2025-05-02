@@ -6,6 +6,7 @@ create table Libro(
 ID int primary key identity(1,1),
 Titulo nvarchar(64),
 Precio decimal(10,2),
+Autor nvarchar(32),
 Stock int
 )
 go
