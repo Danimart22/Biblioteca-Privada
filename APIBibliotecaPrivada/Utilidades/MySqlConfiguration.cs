@@ -1,4 +1,4 @@
-﻿namespace Biblioteca_Privada.Utilidades
+﻿namespace APIBibliotecaPrivada.Utilidades
 {
     public class MySQLConfiguration
     {
