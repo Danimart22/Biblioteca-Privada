@@ -44,7 +44,7 @@ namespace APIBibliotecaPrivada.DAO
             try
             {
                 var db = dbConnection();
-                result = await db.ExecuteAsync(LibroDAOHelper.crearLibro, new { libro.ID, libro.Titulo, libro.Autor, libro.precio, libro.stock });
+                result = await db.ExecuteAsync(LibroDAOHelper.crearLibro, new {libro.Titulo, libro.Autor, libro.precio, libro.stock });
                 return result > 0;
             }
             catch(Exception ex)
@@ -61,7 +61,7 @@ namespace APIBibliotecaPrivada.DAO
             try
             {
                 var db = dbConnection();
-                result = await db.ExecuteAsync(LibroDAOHelper.actualizarLibros, new { libro.ID, libro.Titulo, libro.Autor, libro.precio, libro.stock });
+                result = await db.ExecuteAsync(LibroDAOHelper.actualizarLibros, new {libro.Titulo, libro.Autor, libro.precio, libro.stock });
                 return result > 0;
             }catch(Exception ex)
             {
