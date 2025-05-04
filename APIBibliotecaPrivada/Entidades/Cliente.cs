@@ -1,13 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace APIBibliotecaPrivada.Entidades
 {
-    internal class Cliente : IUsuario
+    public class Cliente : IUsuario
     {
+        [Key]
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Email { get; set; }
+        public string Clave { get; set; }
+        public double Saldo { get; set; }
+
+        // Constructor sin parámetros para deserialización
+        public Cliente()
+        {
+        }
+
         public Cliente(int id, string nombre, string email, string clave, double saldo)
         {
             Id = id;
@@ -17,26 +25,14 @@ namespace APIBibliotecaPrivada.Entidades
             Saldo = saldo;
         }
 
-        public int Id { get; set; }
-        public string Nombre { get; set; }
-        public string Email { get; set; }
-        public string Clave { get; set; }
-        public double Saldo { get; set; }
-
         public void verLibros()
         {
-
+            // Implementación
         }
+
         public bool verificarContraseña(string C)
         {
-            if (C.Equals(Clave))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return C.Equals(Clave);
         }
     }
 }

@@ -17,6 +17,8 @@ builder.Services.AddSingleton<MySQLConfiguration>(mySQLConfiguraction);
 //builder.Services.AddSingleton(new MySqlConnection(builder.Configuration.GetConnectionString("MySqlConnection")));
 
 builder.Services.AddSingleton<ILibroDAO, LibroDAO>();
+builder.Services.AddSingleton<IClienteDAO, ClienteDAO>();
+builder.Services.AddSingleton<IClienteNegocio, ClienteNegocio>();
 
 
 var app = builder.Build();
