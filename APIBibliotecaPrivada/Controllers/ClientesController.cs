@@ -41,31 +41,24 @@ namespace APIBibliotecaPrivada.Controllers
 
         [HttpPost]
         [Route("Nuevo")]
-        public async Task<IActionResult> Post(Cliente cliente)
-        {
-            bool result = await _clienteNegocio.guardarCliente(cliente);
-            if (result)
-            {
-                _logger.LogInformation("Cliente insertado exitosamente");
-                return Ok("Cliente creado exitosamente");
-            }
-            return BadRequest("Error al crear el cliente");
-        }
+        public IActionResult Post(Cliente cliente)
+		{
+			Task<bool> result = _clienteNegocio.guardarCliente(cliente);
+			Console.WriteLine("Cliente insertado");
+			_logger.LogInformation(" Insertado Exitosamente ");
+			return Ok();
+		}
 
-        [HttpPut]
-        [Route("Actualizaci n")]
-        public async Task<IActionResult> Actualizar(Cliente cliente)
-        {
-            bool result = await _clienteNegocio.actualizarCliente(cliente);
-            if (result)
-            {
-                _logger.LogInformation("Cliente actualizado exitosamente");
-                return Ok("Cliente actualizado exitosamente");
-            }
-            return BadRequest("Error al actualizar el cliente");
-        }
+		[HttpPut]
+        [Route("Actualizacion")]
+        public IActionResult Actualizar(Cliente cliente)
+		{
+			Task<bool> result = _clienteNegocio.actualizarCliente(cliente);
+			Console.WriteLine(" Cliente Actualizado ");
+			return Ok();
+		}
 
-        [HttpDelete]
+		[HttpDelete]
         [Route("Eliminar/{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {
