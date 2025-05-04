@@ -9,7 +9,7 @@ namespace APIBibliotecaPrivada.DAO
 {
     public class DAOsContext : DbContext
     {
-        public DbSet<Libro> Cursos { get; set; }
+        public DbSet<Libro> Libros { get; set; }
         
         public DAOsContext(DbContextOptions<DAOsContext> options) : base(options) { }
     }
