@@ -13,7 +13,6 @@ public class Libro
     public string Autor { get; set; }
     public int precio { get; set; }
     public int stock { get; set; }
-    public int Year { get; set; }
     private const string BooksFile = "books.txt";
     // Constructor predeterminado
     public Libro()
