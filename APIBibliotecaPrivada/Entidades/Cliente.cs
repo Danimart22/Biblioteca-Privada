@@ -2,7 +2,7 @@
 
 namespace APIBibliotecaPrivada.Entidades
 {
-    public class Cliente : IUsuario
+    public class Cliente
     {
         [Key]
         public int Id { get; set; }
@@ -25,14 +25,5 @@ namespace APIBibliotecaPrivada.Entidades
             Saldo = saldo;
         }
 
-        public void verLibros()
-        {
-            // Implementación
-        }
-
-        public bool verificarContraseña(string C)
-        {
-            return C.Equals(Clave);
-        }
     }
 }
