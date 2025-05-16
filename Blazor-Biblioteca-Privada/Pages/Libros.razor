@@ -1,0 +1,48 @@
+﻿@page "/libros"
+@using BlazorApp.Entidades
+@using BlazorApp.Negocio
+@inject LibroNegocio libroNegocio
+<h3>Listar Libros</h3>
+@if(libros == null)
+{
+	<p><em>No se pudo acceder a la base de datos</em></p>
+}else if(libros.Count == 0){
+	<p><em>No hay materias disponibles.</em></p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Titulo</th>
+				<th>Autor</th>
+				<th>Precio</th>
+				<th>Stock</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach(var libro in libros)
+			{
+				<tr>
+					<td>@libro.id</td>
+					<td>@libro.titulo</td>
+					<td>@libro.autor</td>
+					<td>@libro.precio</td>
+					<td>@libro.stock</td>
+					<td>
+						<button class="btn btn-primary">Editar</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<NuevoLibro/>
+}
+@code {
+	private List<Libro> libros;
+	protected override async Task OnInitializedAsync()
+	{
+		libros = await libroNegocio.listarLibros();
+	}
+}
