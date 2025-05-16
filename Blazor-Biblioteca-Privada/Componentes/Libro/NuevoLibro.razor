@@ -1,7 +1,52 @@
 ﻿ @using BlazorApp.Entidades
  @using BlazorApp.Negocio
-<h3>NuevoLibro</h3>
-
+ @inject LibroNegocio LibroService
+ @inject NavigationManager navigationManager
+<h1>Nuevo Libro</h1>
+<EditForm Model = "@nuevoLibro" OnValidSubmit="@GuardarNuevoLibro">
+	<DataAnnotationsValidator/>
+	<ValidationSummary/>
+	<div class="form-group">
+		<div>
+			<label for="id">ID: </label>
+			<InputNumber id="id" @bind-Value="nuevoLibro.id" size="50" />
+		</div>
+		<div>
+			<label for="titulo">Titulo: </label>
+			<InputText id="titulo" @bind-Value="nuevoLibro.titulo" size="50" />
+		</div>
+		<div>
+			<label for="autor">Autor: </label>
+			<InputText id="autor" @bind-Value="nuevoLibro.autor" size="50" />
+		</div>
+		<div>
+			<label for="precio">Precio: </label>
+			<InputNumber id="precio" @bind-Value="nuevoLibro.precio" size="50" />
+		</div>
+		<div>
+			<label for="stock">Stock: </label>
+			<InputNumber id="stock" @bind-Value="nuevoLibro.stock" size="50" />
+		</div>
+	</div>
+	<button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+<br />
+<br />
 @code {
-
+	private Libro nuevoLibro = new Libro();
+	string resultado = " ";
+	private async Task GuardarNuevoLibro()
+	{
+		bool guardado = await LibroService.guardarLibro(nuevoLibro);
+		if (guardado)
+		{
+			Console.WriteLine("Libro guardado exitosamente. ");
+			resultado = " Libro guardado ";
+		}
+		else
+		{
+			Console.WriteLine("Error al guardar el libro");
+			resultado = " No se pudo guardar ";
+		}
+	}
 }
