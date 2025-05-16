@@ -82,7 +82,7 @@ namespace APIBibliotecaPrivada.DAO
 				try
 				{
 					var db = dbConnection();
-					result = await db.ExecuteAsync(ClienteDAOHelper.actualizarCliente, new { cliente.Id, cliente.Nombre, cliente.Email, cliente.Clave, cliente.Saldo });
+					result = await db.ExecuteAsync(ClienteDAOHelper.actualizarCliente, new {cliente.Nombre, cliente.Email, cliente.Clave, cliente.Saldo });
 					_logger.LogInformation($"Cliente con ID {cliente.Id} actualizado exitosamente");
 					return result > 0;
 				}
