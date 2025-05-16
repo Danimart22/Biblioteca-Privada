@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca-Privada", "Bibli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIBibliotecaPrivada", "APIBibliotecaPrivada\APIBibliotecaPrivada.csproj", "{A2C53147-DF54-471A-9286-3AE85FB8379B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor-Biblioteca-Privada", "Blazor-Biblioteca-Privada\Blazor-Biblioteca-Privada.csproj", "{05AF26FC-D76F-47C6-BCB3-476340ACB423}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp", "Blazor-Biblioteca-Privada\BlazorApp.csproj", "{05AF26FC-D76F-47C6-BCB3-476340ACB423}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

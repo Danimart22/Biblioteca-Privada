@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entidades\" />
     <Folder Include="Componentes\" />
     <Folder Include="Formularios\" />
     <Folder Include="Negocio\" />
