@@ -1,38 +1,58 @@
-create database BibliotecaPrivada
-go
-use BibliotecaPrivada
-go
-create table Libro(
-ID int primary key identity(1,1),
-Titulo nvarchar(64),
-Precio decimal(10,2),
-Autor nvarchar(32),
-Stock int
-)
-go
-create table Cliente(
-ID int primary key identity(1,1),
-Nombre nvarchar(64),
-Email nvarchar(64),
-Clave nvarchar(32),
-Saldo decimal(10,2)
-)
-go
-create table Pedido(
-ID int primary key identity(1,1),
+
+
+CREATE DATABASE IF NOT EXISTS BibliotecaPrivada;
+USE BibliotecaPrivada;
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS Libros (
+    ID INT PRIMARY KEY,
+    Titulo VARCHAR(255) NOT NULL,
+    Autor VARCHAR(255) NOT NULL,
+    Precio DECIMAL(10,2) NOT NULL,
+    Stock INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Cliente (
+    ID INT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) NOT NULL,
+    Clave VARCHAR(255) NOT NULL,
+    Saldo decimal(10,2)
+);
+CREATE TABLE IF NOT EXISTS Pedido(
+ID INT PRIMARY KEY,
 IDCliente int,
-Libros nvarchar(128),
+Libros varchar(100),
 Total decimal(10,2),
-Fecha datetime
+Fecha datetime,
 foreign key(IDCliente) references Cliente(ID)
-)
-go
-create table Pago(
-ID int primary key identity(1,1),
+);
+CREATE TABLE IF NOT EXISTS Pago(
+ID INT PRIMARY KEY,
 IDPedido int,
 Monto decimal(10,2),
-MetodoPago nvarchar(20),
-Fecha datetime,
-NumeroTarjeta nvarchar(32)
-)
-go
+MetodoPago varchar(20),
+Fecha Datetime,
+NumeroTarjeta varchar(30)
+);
+INSERT INTO Cliente (Nombre, Email, Clave, Saldo) VALUES
+(1,'Laura Gómez', 'laura@example.com', 'clave123', 120.50),
+(2,'Carlos Méndez', 'carlos@example.com', 'clave456', 75.25),
+(3,'Sofía Ruiz', 'sofia@example.com', 'clave789', 200.00);
+INSERT INTO Pedido (IDCliente, Libros, Total, Fecha) VALUES
+(1, 1, '1,2', 35.49, NOW()),
+(2, 2, '3', 15.50, NOW()),
+(3, 3, '2,3', 28.25, NOW());
+INSERT INTO Pago (IDPedido, Monto, MetodoPago, Fecha, NumeroTarjeta) VALUES
+(1,1, 35.49, 'Tarjeta', NOW(), '1234-5678-9012-3456'),
+(2,2, 15.50, 'Efectivo', NOW(), NULL),
+(3,3, 28.25, 'Tarjeta', NOW(), '9876-5432-1098-7654');
+INSERT INTO Libros (Titulo, Autor, Precio, Stock) VALUES 
+(1,'El Principito', 'Antoine de Saint-Exupéry', 10.99, 15),
+(2,'1984', 'George Orwell', 12.50, 20),
+(3,'Rayuela', 'Julio Cortázar', 13.75, 8);
+
+
