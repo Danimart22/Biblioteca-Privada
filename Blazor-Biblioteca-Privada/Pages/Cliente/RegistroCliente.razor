@@ -1,0 +1,108 @@
+@page "/cliente/registro"
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<div class="form-container">
+    <h2 class="form-title">Registro de Cliente</h2>
+    <p class="form-subtitle">Complete el formulario para registrarse en la biblioteca</p>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="form-error">
+            @mensajeError
+        </div>
+    }
+
+    <EditForm Model="@cliente" OnValidSubmit="RegistrarCliente">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label class="form-label" for="nombre">Nombre</label>
+            <InputText id="nombre" class="form-control" @bind-Value="cliente.Nombre" />
+            <ValidationMessage For="@(() => cliente.Nombre)" class="validation-message" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <InputText id="email" class="form-control" @bind-Value="cliente.Email" />
+            <ValidationMessage For="@(() => cliente.Email)" class="validation-message" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="clave">Contraseña</label>
+            <InputText type="password" id="clave" class="form-control" @bind-Value="cliente.Clave" />
+            <ValidationMessage For="@(() => cliente.Clave)" class="validation-message" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="confirmarClave">Confirmar Contraseña</label>
+            <InputText type="password" id="confirmarClave" class="form-control" @bind-Value="confirmarClave" />
+            @if (!string.IsNullOrEmpty(errorConfirmacion))
+            {
+                <div class="validation-message">@errorConfirmacion</div>
+            }
+        </div>
+
+        <div class="button-group">
+            <button type="button" class="btn-secondary" @onclick="Cancelar">Cancelar</button>
+            <button type="submit" class="btn-primary">Registrar</button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private ClienteModel cliente = new();
+    private string confirmarClave = string.Empty;
+    private string? mensajeError;
+    private string? errorConfirmacion;
+
+    private class ClienteModel
+    {
+        [Required(ErrorMessage = "El nombre es requerido")]
+        [StringLength(100, ErrorMessage = "El nombre no puede tener más de 100 caracteres")]
+        public string Nombre { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El email es requerido")]
+        [EmailAddress(ErrorMessage = "El formato del email no es válido")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La contraseña es requerida")]
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "La contraseña debe tener entre 6 y 50 caracteres")]
+        public string Clave { get; set; } = string.Empty;
+
+        public double Saldo { get; set; } = 0;
+    }
+
+    private async Task RegistrarCliente()
+    {
+        if (cliente.Clave != confirmarClave)
+        {
+            errorConfirmacion = "Las contraseñas no coinciden";
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/cliente", cliente);
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                mensajeError = $"Error al registrar: {error}";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error: {ex.Message}";
+        }
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+} 

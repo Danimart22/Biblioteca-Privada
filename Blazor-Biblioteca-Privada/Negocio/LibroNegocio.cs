@@ -6,7 +6,7 @@ namespace BlazorApp.Negocio
     public class LibroNegocio
     {
         private readonly HttpClient _httpClient;
-        private readonly string _baseApiUrl = "https://localhost:7078/Libros";
+        private readonly string _baseApiUrl = "api/Libros";
         private readonly ILogger<Libro> _logger;
 
         public LibroNegocio(HttpClient httpClient, ILogger<Libro> logger)

@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -6,7 +7,20 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <AuthorizeView>
+                <Authorized>
+                    <span class="user-info">
+                        <a href="/perfil" class="nav-link">
+                            <span class="oi oi-person"></span> Mi Perfil
+                        </a>
+                    </span>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login" class="nav-link">
+                        <span class="oi oi-account-login"></span> Iniciar Sesión
+                    </a>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
@@ -14,3 +28,23 @@
         </article>
     </main>
 </div>
+
+<style>
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-link {
+        color: #1a1a1a;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-link:hover {
+        color: #0066cc;
+    }
+</style>

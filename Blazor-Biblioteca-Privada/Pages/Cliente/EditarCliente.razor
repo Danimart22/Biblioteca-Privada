@@ -1,0 +1,165 @@
+@page "/cliente/editar/{Id:int}"
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<div class="form-container">
+    <h2 class="form-title">Editar Perfil</h2>
+    <p class="form-subtitle">Actualice sus datos personales</p>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="form-error">
+            @mensajeError
+        </div>
+    }
+
+    @if (cliente != null)
+    {
+        <EditForm Model="@cliente" OnValidSubmit="GuardarCambios">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label class="form-label" for="nombre">Nombre</label>
+                <InputText id="nombre" class="form-control" @bind-Value="cliente.Nombre" />
+                <ValidationMessage For="@(() => cliente.Nombre)" class="validation-message" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="cliente.Email" />
+                <ValidationMessage For="@(() => cliente.Email)" class="validation-message" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="saldo">Saldo</label>
+                <InputNumber id="saldo" class="form-control" @bind-Value="cliente.Saldo" disabled />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="nuevaClave">Nueva Contraseña (opcional)</label>
+                <InputText type="password" id="nuevaClave" class="form-control" @bind-Value="nuevaClave" />
+                @if (!string.IsNullOrEmpty(errorClave))
+                {
+                    <div class="validation-message">@errorClave</div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="confirmarClave">Confirmar Nueva Contraseña</label>
+                <InputText type="password" id="confirmarClave" class="form-control" @bind-Value="confirmarClave" />
+                @if (!string.IsNullOrEmpty(errorConfirmacion))
+                {
+                    <div class="validation-message">@errorConfirmacion</div>
+                }
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn-secondary" @onclick="Cancelar">Cancelar</button>
+                <button type="submit" class="btn-primary">Guardar Cambios</button>
+            </div>
+        </EditForm>
+    }
+    else
+    {
+        <p>Cargando...</p>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private ClienteModel? cliente;
+    private string nuevaClave = string.Empty;
+    private string confirmarClave = string.Empty;
+    private string? mensajeError;
+    private string? errorClave;
+    private string? errorConfirmacion;
+
+    private class ClienteModel
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El nombre es requerido")]
+        [StringLength(100, ErrorMessage = "El nombre no puede tener más de 100 caracteres")]
+        public string Nombre { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El email es requerido")]
+        [EmailAddress(ErrorMessage = "El formato del email no es válido")]
+        public string Email { get; set; } = string.Empty;
+
+        public double Saldo { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await Http.GetFromJsonAsync<ClienteModel>($"api/cliente/{Id}");
+            if (response != null)
+            {
+                cliente = response;
+            }
+            else
+            {
+                mensajeError = "No se encontró el cliente";
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al cargar los datos: {ex.Message}";
+        }
+    }
+
+    private async Task GuardarCambios()
+    {
+        if (!string.IsNullOrEmpty(nuevaClave))
+        {
+            if (nuevaClave.Length < 6)
+            {
+                errorClave = "La contraseña debe tener al menos 6 caracteres";
+                return;
+            }
+
+            if (nuevaClave != confirmarClave)
+            {
+                errorConfirmacion = "Las contraseñas no coinciden";
+                return;
+            }
+        }
+
+        try
+        {
+            var clienteActualizado = new
+            {
+                cliente?.Id,
+                cliente?.Nombre,
+                cliente?.Email,
+                Clave = string.IsNullOrEmpty(nuevaClave) ? null : nuevaClave,
+                cliente?.Saldo
+            };
+
+            var response = await Http.PutAsJsonAsync($"api/cliente/{Id}", clienteActualizado);
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/perfil");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                mensajeError = $"Error al actualizar: {error}";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error: {ex.Message}";
+        }
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/perfil");
+    }
+} 
