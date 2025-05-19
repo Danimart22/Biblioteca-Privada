@@ -1,7 +1,128 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Biblioteca Privada - Inicio</PageTitle>
 
-<h1>Hola lectores!</h1>
+<div class="welcome-container">
+    <h1 class="welcome-title">¡Bienvenidos a la Biblioteca Privada!</h1>
+    <p class="welcome-subtitle">Tu espacio personal para la gestión de libros</p>
 
-Bienvenidos a la biblioteca privada
+    <div class="features-grid">
+        <div class="feature-card">
+            <span class="oi oi-book feature-icon"></span>
+            <h3>Gestión de Libros</h3>
+            <p>Administra tu colección personal de libros de manera fácil y eficiente.</p>
+        </div>
+
+        <div class="feature-card">
+            <span class="oi oi-person feature-icon"></span>
+            <h3>Perfil Personal</h3>
+            <p>Mantén tu información actualizada y gestiona tus preferencias.</p>
+        </div>
+
+        <div class="feature-card">
+            <span class="oi oi-cart feature-icon"></span>
+            <h3>Pedidos</h3>
+            <p>Realiza pedidos y mantén un registro de tus transacciones.</p>
+        </div>
+    </div>
+
+    <AuthorizeView>
+        <Authorized>
+            <div class="action-buttons">
+                <a href="/libros" class="btn-primary">Ver Catálogo</a>
+                <a href="/perfil" class="btn-secondary">Mi Perfil</a>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="action-buttons">
+                <a href="/login" class="btn-primary">Iniciar Sesión</a>
+                <a href="/cliente/registro" class="btn-secondary">Registrarse</a>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+<style>
+    .welcome-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .welcome-title {
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-subtitle {
+        font-size: 1.25rem;
+        color: #666;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .feature-card {
+        background: #ffffff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .feature-icon {
+        font-size: 2rem;
+        color: #2563eb;
+        margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+        color: #6b7280;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #2563eb;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+    }
+
+    .btn-secondary {
+        background-color: #6b7280;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #4b5563;
+    }
+</style>

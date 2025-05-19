@@ -1,0 +1,185 @@
+@page "/perfil"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+
+<div class="form-container">
+    <h2 class="form-title">Mi Perfil</h2>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="form-error">
+            @mensajeError
+        </div>
+    }
+
+    @if (cliente != null)
+    {
+        <div class="profile-info">
+            <div class="info-group">
+                <label class="info-label">Nombre</label>
+                <p class="info-value">@cliente.Nombre</p>
+            </div>
+
+            <div class="info-group">
+                <label class="info-label">Email</label>
+                <p class="info-value">@cliente.Email</p>
+            </div>
+
+            <div class="info-group">
+                <label class="info-label">Saldo</label>
+                <p class="info-value">$@cliente.Saldo.ToString("F2")</p>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-secondary" @onclick="CerrarSesion">Cerrar Sesión</button>
+                <button class="btn-primary" @onclick="() => EditarPerfil(cliente.Id)">Editar Perfil</button>
+            </div>
+        </div>
+
+        @if (pedidos != null && pedidos.Any())
+        {
+            <div class="pedidos-section">
+                <h3 class="section-title">Mis Pedidos</h3>
+                <div class="pedidos-list">
+                    @foreach (var pedido in pedidos)
+                    {
+                        <div class="pedido-card">
+                            <div class="pedido-header">
+                                <span class="pedido-fecha">@pedido.Fecha.ToString("dd/MM/yyyy")</span>
+                                <span class="pedido-total">Total: $@pedido.Total.ToString("F2")</span>
+                            </div>
+                            <div class="pedido-libros">
+                                <p>Libros: @pedido.Libros</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>Cargando...</p>
+    }
+</div>
+
+<style>
+    .profile-info {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .info-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+        color: #1e293b;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .section-title {
+        color: #1f2937;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 2rem 0 1rem;
+    }
+
+    .pedidos-list {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .pedido-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .pedido-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .pedido-fecha {
+        color: #64748b;
+        font-size: 0.875rem;
+    }
+
+    .pedido-total {
+        font-weight: 600;
+        color: #2563eb;
+    }
+
+    .pedido-libros {
+        color: #4b5563;
+        font-size: 0.875rem;
+    }
+</style>
+
+@code {
+    private ClienteModel? cliente;
+    private List<PedidoModel>? pedidos;
+    private string? mensajeError;
+
+    private class ClienteModel
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public double Saldo { get; set; }
+    }
+
+    private class PedidoModel
+    {
+        public int Id { get; set; }
+        public string Libros { get; set; } = string.Empty;
+        public double Total { get; set; }
+        public DateTime Fecha { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var userId = await LocalStorage.GetItemAsync<int>("userId");
+            if (userId == 0)
+            {
+                NavigationManager.NavigateTo("/login");
+                return;
+            }
+
+            cliente = await Http.GetFromJsonAsync<ClienteModel>($"api/cliente/{userId}");
+            pedidos = await Http.GetFromJsonAsync<List<PedidoModel>>($"api/pedido/cliente/{userId}");
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al cargar los datos: {ex.Message}";
+        }
+    }
+
+    private void EditarPerfil(int id)
+    {
+        NavigationManager.NavigateTo($"/cliente/editar/{id}");
+    }
+
+    private async Task CerrarSesion()
+    {
+        await LocalStorage.RemoveItemAsync("userId");
+        await LocalStorage.RemoveItemAsync("token");
+        NavigationManager.NavigateTo("/login");
+    }
+} 

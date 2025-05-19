@@ -1,0 +1,86 @@
+@page "/login"
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+
+<div class="form-container">
+    <h2 class="form-title">Iniciar Sesión</h2>
+    <p class="form-subtitle">Ingrese sus credenciales para acceder a la biblioteca</p>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="form-error">
+            @mensajeError
+        </div>
+    }
+
+    <EditForm Model="@loginModel" OnValidSubmit="IniciarSesion">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
+            <ValidationMessage For="@(() => loginModel.Email)" class="validation-message" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="clave">Contraseña</label>
+            <InputText type="password" id="clave" class="form-control" @bind-Value="loginModel.Clave" />
+            <ValidationMessage For="@(() => loginModel.Clave)" class="validation-message" />
+        </div>
+
+        <div class="button-group">
+            <a href="/cliente/registro" class="btn-secondary">Registrarse</a>
+            <button type="submit" class="btn-primary">Iniciar Sesión</button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? mensajeError;
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "El email es requerido")]
+        [EmailAddress(ErrorMessage = "El formato del email no es válido")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La contraseña es requerida")]
+        public string Clave { get; set; } = string.Empty;
+    }
+
+    private async Task IniciarSesion()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/cliente/login", loginModel);
+            if (response.IsSuccessStatusCode)
+            {
+                var resultado = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                if (resultado != null)
+                {
+                    await LocalStorage.SetItemAsync("userId", resultado.Id);
+                    await LocalStorage.SetItemAsync("token", resultado.Token);
+                    NavigationManager.NavigateTo("/");
+                }
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                mensajeError = "Email o contraseña incorrectos";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al iniciar sesión: {ex.Message}";
+        }
+    }
+
+    public class LoginResponse
+    {
+        public int Id { get; set; }
+        public string Token { get; set; } = string.Empty;
+    }
+} 
