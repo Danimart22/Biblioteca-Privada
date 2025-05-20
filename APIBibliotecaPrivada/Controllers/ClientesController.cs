@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace APIBibliotecaPrivada.Controllers
 {
     [ApiController]
-    [Route("Clientes")]
+    [Route("api/[controller]")]
     public class ClientesController : ControllerBase
     {
         private readonly IClienteNegocio _clienteNegocio;
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<ClientesController> _logger;
 
-        public ClientesController(IClienteNegocio clienteNegocio, ILogger<WeatherForecastController> logger)
+        public ClientesController(IClienteNegocio clienteNegocio, ILogger<ClientesController> logger)
         {
             _clienteNegocio = clienteNegocio;
             _logger = logger;
@@ -27,8 +27,7 @@ namespace APIBibliotecaPrivada.Controllers
             return _clienteNegocio.listarClientes();
         }
 
-        [HttpGet]
-        [Route("Obtener/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Cliente>> GetById(int id)
         {
             var cliente = await _clienteNegocio.obtenerClientePorId(id);
@@ -40,35 +39,99 @@ namespace APIBibliotecaPrivada.Controllers
         }
 
         [HttpPost]
-        [Route("Nuevo")]
-        public IActionResult Post(Cliente cliente)
-		{
-			Task<bool> result = _clienteNegocio.guardarCliente(cliente);
-			Console.WriteLine("Cliente insertado");
-			_logger.LogInformation(" Insertado Exitosamente ");
-			return Ok();
-		}
-
-		[HttpPut]
-        [Route("Actualizacion")]
-        public IActionResult Actualizar(Cliente cliente)
-		{
-			Task<bool> result = _clienteNegocio.actualizarCliente(cliente);
-			Console.WriteLine(" Cliente Actualizado ");
-			return Ok();
-		}
-
-		[HttpDelete]
-        [Route("Eliminar/{id}")]
-        public async Task<IActionResult> Eliminar(int id)
+        public async Task<IActionResult> Post([FromBody] Cliente cliente)
         {
-            bool result = await _clienteNegocio.eliminarCliente(id);
+            _logger.LogInformation($"Intentando registrar cliente: {cliente.Email}");
+            try
+            {
+                var result = await _clienteNegocio.guardarCliente(cliente);
+                if (result)
+                {
+                    _logger.LogInformation("Cliente registrado exitosamente");
+                    return Ok(new { message = "Cliente registrado exitosamente" });
+                }
+                _logger.LogWarning("Error al registrar el cliente");
+                return BadRequest(new { message = "Error al registrar el cliente" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error al registrar cliente: {ex.Message}");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+        {
+            _logger.LogInformation($"Intentando login para: {loginRequest.Email}");
+            try
+            {
+                var cliente = await _clienteNegocio.obtenerClientePorEmail(loginRequest.Email);
+                if (cliente == null)
+                {
+                    _logger.LogWarning($"Cliente no encontrado: {loginRequest.Email}");
+                    return Unauthorized(new { message = "Credenciales inválidas" });
+                }
+
+                if (cliente.Clave != loginRequest.Clave)
+                {
+                    _logger.LogWarning($"Contraseña incorrecta para: {loginRequest.Email}");
+                    return Unauthorized(new { message = "Credenciales inválidas" });
+                }
+
+                var response = new LoginResponse
+                {
+                    Id = cliente.Id,
+                    Token = "dummy-token"
+                };
+
+                _logger.LogInformation($"Login exitoso para: {loginRequest.Email}");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error en login: {ex.Message}");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, Cliente cliente)
+        {
+            if (id != cliente.Id)
+            {
+                return BadRequest("ID no coincide");
+            }
+
+            var result = await _clienteNegocio.actualizarCliente(cliente);
             if (result)
             {
-                _logger.LogInformation($"Cliente con ID {id} eliminado exitosamente");
-                return Ok($"Cliente con ID {id} eliminado exitosamente");
+                return Ok();
             }
-            return NotFound($"Cliente con ID {id} no encontrado o error al eliminar");
+            return BadRequest("Error al actualizar el cliente");
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _clienteNegocio.eliminarCliente(id);
+            if (result)
+            {
+                return Ok();
+            }
+            return NotFound($"Cliente con ID {id} no encontrado");
+        }
+    }
+
+    public class LoginRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Clave { get; set; } = string.Empty;
+    }
+
+    public class LoginResponse
+    {
+        public int Id { get; set; }
+        public string Token { get; set; } = string.Empty;
     }
 }

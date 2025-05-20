@@ -1,12 +1,3 @@
-
-
-CREATE DATABASE IF NOT EXISTS BibliotecaPrivada;
-USE BibliotecaPrivada;
-
-
-
-
-
 CREATE TABLE IF NOT EXISTS Libros (
     ID INT PRIMARY KEY,
     Titulo VARCHAR(255) NOT NULL,
@@ -15,8 +6,9 @@ CREATE TABLE IF NOT EXISTS Libros (
     Stock INT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Cliente (
-    ID INT PRIMARY KEY,
+DROP TABLE IF EXISTS Cliente;
+CREATE TABLE Cliente (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
     Email VARCHAR(100) NOT NULL,
     Clave VARCHAR(255) NOT NULL,
@@ -39,9 +31,9 @@ Fecha Datetime,
 NumeroTarjeta varchar(30)
 );
 INSERT INTO Cliente (Nombre, Email, Clave, Saldo) VALUES
-(1,'Laura Gómez', 'laura@example.com', 'clave123', 120.50),
-(2,'Carlos Méndez', 'carlos@example.com', 'clave456', 75.25),
-(3,'Sofía Ruiz', 'sofia@example.com', 'clave789', 200.00);
+('Laura Gómez', 'laura@example.com', 'clave123', 120.50),
+('Carlos Méndez', 'carlos@example.com', 'clave456', 75.25),
+('Sofía Ruiz', 'sofia@example.com', 'clave789', 200.00);
 INSERT INTO Pedido (IDCliente, Libros, Total, Fecha) VALUES
 (1, 1, '1,2', 35.49, NOW()),
 (2, 2, '3', 15.50, NOW()),
@@ -54,5 +46,3 @@ INSERT INTO Libros (Titulo, Autor, Precio, Stock) VALUES
 (1,'El Principito', 'Antoine de Saint-Exupéry', 10.99, 15),
 (2,'1984', 'George Orwell', 12.50, 20),
 (3,'Rayuela', 'Julio Cortázar', 13.75, 8);
-
-

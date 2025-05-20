@@ -2,6 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject ILogger<RegistroCliente> Logger
 
 <div class="form-container">
     <h2 class="form-title">Registro de Cliente</h2>
@@ -76,28 +77,36 @@
 
     private async Task RegistrarCliente()
     {
-        if (cliente.Clave != confirmarClave)
-        {
-            errorConfirmacion = "Las contraseñas no coinciden";
-            return;
-        }
-
         try
         {
-            var response = await Http.PostAsJsonAsync("api/cliente", cliente);
+            Logger.LogInformation("Iniciando registro de cliente: {Email}", cliente.Email);
+
+            if (cliente.Clave != confirmarClave)
+            {
+                errorConfirmacion = "Las contraseñas no coinciden";
+                Logger.LogWarning("Las contraseñas no coinciden para el email: {Email}", cliente.Email);
+                return;
+            }
+
+            var response = await Http.PostAsJsonAsync("api/Clientes", cliente);
+            var content = await response.Content.ReadAsStringAsync();
+            Logger.LogInformation("Respuesta del servidor: {StatusCode} - {Content}", response.StatusCode, content);
+
             if (response.IsSuccessStatusCode)
             {
+                Logger.LogInformation("Cliente registrado exitosamente: {Email}", cliente.Email);
                 NavigationManager.NavigateTo("/login");
             }
             else
             {
-                var error = await response.Content.ReadAsStringAsync();
-                mensajeError = $"Error al registrar: {error}";
+                mensajeError = $"Error al registrar: {content}";
+                Logger.LogError("Error al registrar cliente: {Error}", content);
             }
         }
         catch (Exception ex)
         {
             mensajeError = $"Error: {ex.Message}";
+            Logger.LogError(ex, "Error al registrar cliente: {Email}", cliente.Email);
         }
     }
 
