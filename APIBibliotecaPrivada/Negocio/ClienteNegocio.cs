@@ -25,6 +25,11 @@ namespace APIBibliotecaPrivada.Negocio
             return await _clienteDAO.obtenerClientePorId(id);
         }
 
+        public async Task<Cliente> obtenerClientePorEmail(string email)
+        {
+            return await _clienteDAO.obtenerClientePorEmail(email);
+        }
+
         public async Task<Boolean> guardarCliente(Cliente cliente)
         {
             return await _clienteDAO.guardarCliente(cliente);

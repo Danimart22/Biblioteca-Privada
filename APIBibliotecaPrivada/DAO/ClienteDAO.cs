@@ -10,9 +10,9 @@ namespace APIBibliotecaPrivada.DAO
 		internal class ClienteDAO : IClienteDAO
 		{
 			private readonly MySQLConfiguration _connectionString;
-			private readonly ILogger<WeatherForecastController> _logger;
+			private readonly ILogger<ClientesController> _logger;
 
-			public ClienteDAO(MySQLConfiguration connectionString, ILogger<WeatherForecastController> logger)
+			public ClienteDAO(MySQLConfiguration connectionString, ILogger<ClientesController> logger)
 			{
 				_connectionString = connectionString;
 				_logger = logger;
@@ -58,6 +58,23 @@ namespace APIBibliotecaPrivada.DAO
 				return cliente;
 			}
 
+			public async Task<Cliente> obtenerClientePorEmail(string email)
+			{
+				Cliente cliente = null;
+				try
+				{
+					var db = dbConnection();
+					cliente = await db.QueryFirstOrDefaultAsync<Cliente>(ClienteDAOHelper.obtenerClientePorEmail, new { Email = email });
+					_logger.LogInformation($"Consulta de cliente con email {email} exitosa");
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError($"Error al obtener cliente con email {email}: " + ex);
+					Console.WriteLine("Error: " + ex.Message);
+				}
+				return cliente;
+			}
+
 			public async Task<Boolean> guardarCliente(Cliente cliente)
 			{
 				int result = 0;
@@ -82,7 +99,7 @@ namespace APIBibliotecaPrivada.DAO
 				try
 				{
 					var db = dbConnection();
-					result = await db.ExecuteAsync(ClienteDAOHelper.actualizarCliente, new {cliente.Nombre, cliente.Email, cliente.Clave, cliente.Saldo });
+					result = await db.ExecuteAsync(ClienteDAOHelper.actualizarCliente, new { cliente.Id, cliente.Nombre, cliente.Email, cliente.Clave, cliente.Saldo });
 					_logger.LogInformation($"Cliente con ID {cliente.Id} actualizado exitosamente");
 					return result > 0;
 				}
