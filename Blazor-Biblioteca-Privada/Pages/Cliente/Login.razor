@@ -55,7 +55,7 @@
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("api/cliente/login", loginModel);
+            var response = await Http.PostAsJsonAsync("api/Clientes/login", loginModel);
             if (response.IsSuccessStatusCode)
             {
                 var resultado = await response.Content.ReadFromJsonAsync<LoginResponse>();
