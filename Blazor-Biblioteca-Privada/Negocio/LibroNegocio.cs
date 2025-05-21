@@ -20,7 +20,7 @@ namespace BlazorApp.Negocio
             try
             {
                 var response = await _httpClient.GetAsync($"{_baseApiUrl}/Listar");
-                Console.WriteLine($"Respuesta de listar materias: Status Code - {response.StatusCode}");
+                Console.WriteLine($"Respuesta de listar libros: Status Code - {response.StatusCode}");
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
@@ -31,12 +31,12 @@ namespace BlazorApp.Negocio
                 }
                 else
                 {
-                    Console.WriteLine($"Error al lstar materias: Status Code - {response.StatusCode}");
+                    Console.WriteLine($"Error al listar libros: Status Code - {response.StatusCode}");
                     return null;
                 }
             }catch(Exception ex)
             {
-                Console.WriteLine($"Error al listar materias: {ex.Message}");
+                Console.WriteLine($"Error al listar libros: {ex.Message}");
                 return null;
             }
         }
