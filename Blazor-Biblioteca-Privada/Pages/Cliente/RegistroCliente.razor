@@ -88,7 +88,7 @@
                 return;
             }
 
-            var response = await Http.PostAsJsonAsync("api/Clientes", cliente);
+            var response = await Http.PostAsJsonAsync("api/Clientes/Nuevo", cliente);
             var content = await response.Content.ReadAsStringAsync();
             Logger.LogInformation("Respuesta del servidor: {StatusCode} - {Content}", response.StatusCode, content);
 
