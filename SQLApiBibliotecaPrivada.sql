@@ -1,5 +1,5 @@
 create database BibliotecaPrivada;
-
+use BibliotecaPrivada;
 CREATE TABLE IF NOT EXISTS Libros (
     ID INT PRIMARY KEY,
     Titulo VARCHAR(255) NOT NULL,
@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS Libros (
     Precio DECIMAL(10,2) NOT NULL,
     Stock INT NOT NULL
 );
-
 DROP TABLE IF EXISTS Cliente;
 CREATE TABLE Cliente (
     ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -40,7 +39,7 @@ INSERT INTO Cliente (Nombre, Email, Clave, Saldo) VALUES
 ('Carlos Méndez', 'carlos@example.com', 'clave456', 75.25),
 ('Sofía Ruiz', 'sofia@example.com', 'clave789', 200.00);
 
-INSERT INTO Pedido (IDCliente, Libros, Total, Fecha) VALUES
+INSERT INTO Pedido (ID, IDCliente, Libros, Total, Fecha) VALUES
 (1, 1, '1,2', 35.49, NOW()),
 (2, 2, '3', 15.50, NOW()),
 (3, 3, '2,3', 28.25, NOW());
