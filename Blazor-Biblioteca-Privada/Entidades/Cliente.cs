@@ -19,5 +19,9 @@ namespace BlazorApp.Entidades
         public string Clave { get; set; } = string.Empty;
         
         public double Saldo { get; set; }
+        public Cliente()
+        {
+
+        }
     }
 } 

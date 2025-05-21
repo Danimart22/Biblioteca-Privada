@@ -39,6 +39,7 @@ namespace APIBibliotecaPrivada.Controllers
         }
 
         [HttpPost]
+        [Route("Nuevo")]
         public async Task<IActionResult> Post([FromBody] Cliente cliente)
         {
             _logger.LogInformation($"Intentando registrar cliente: {cliente.Email}");
@@ -95,20 +96,13 @@ namespace APIBibliotecaPrivada.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Cliente cliente)
+        [HttpPut]
+        [Route("Actualización")]
+        public IActionResult Actualizar(Cliente cliente)
         {
-            if (id != cliente.Id)
-            {
-                return BadRequest("ID no coincide");
-            }
-
-            var result = await _clienteNegocio.actualizarCliente(cliente);
-            if (result)
-            {
-                return Ok();
-            }
-            return BadRequest("Error al actualizar el cliente");
+            Task<bool> result = _clienteNegocio.actualizarCliente(cliente);
+            Console.WriteLine(" Libro Actualizado ");
+            return Ok();
         }
 
         [HttpDelete("{id}")]
