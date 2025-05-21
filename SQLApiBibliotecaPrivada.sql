@@ -1,4 +1,4 @@
-create database BibliotecaPrivada
+create database BibliotecaPrivada;
 
 CREATE TABLE IF NOT EXISTS Libros (
     ID INT PRIMARY KEY,
