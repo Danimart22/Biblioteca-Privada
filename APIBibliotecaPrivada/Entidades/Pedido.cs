@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace APIBibliotecaPrivada.Entidades
 {
-    internal class Pedido
+    public class Pedido
     {
         private int id;
         private IUsuario usuario;
