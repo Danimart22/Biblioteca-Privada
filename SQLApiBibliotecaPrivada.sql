@@ -44,12 +44,12 @@ INSERT INTO Pedido (ID, IDCliente, Libros, Total, Fecha) VALUES
 (2, 2, '3', 15.50, NOW()),
 (3, 3, '2,3', 28.25, NOW());
 
-INSERT INTO Pago (IDPedido, Monto, MetodoPago, Fecha, NumeroTarjeta) VALUES
+INSERT INTO Pago (ID, IDPedido, Monto, MetodoPago, Fecha, NumeroTarjeta) VALUES
 (1,1, 35.49, 'Tarjeta', NOW(), '1234-5678-9012-3456'),
 (2,2, 15.50, 'Efectivo', NOW(), NULL),
 (3,3, 28.25, 'Tarjeta', NOW(), '9876-5432-1098-7654');
 
-INSERT INTO Libros (Titulo, Autor, Precio, Stock) VALUES 
+INSERT INTO Libros (ID, Titulo, Autor, Precio, Stock) VALUES 
 (1,'El Principito', 'Antoine de Saint-Exupéry', 10.99, 15),
 (2,'1984', 'George Orwell', 12.50, 20),
 (3,'Rayuela', 'Julio Cortázar', 13.75, 8);
