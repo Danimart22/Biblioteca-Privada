@@ -1,12 +1,14 @@
 ﻿@page "/logout"
 @inject ILocalStorageService localStorage
 @inject NavigationManager navigationManager
-
+@inject AuthenticationStateProvider AuthStateProvider
 @code {
 	protected override async Task OnInitializedAsync()
 	{
 		await localStorage.RemoveItemAsync("userId");
 		await localStorage.RemoveItemAsync("token");
+		var customAuth = (CustomAuthStateProvider)AuthStateProvider;
+		customAuth.MarkUserAsLoggedOut();
 		navigationManager.NavigateTo("/login", forceLoad: true);
 	}
 }
