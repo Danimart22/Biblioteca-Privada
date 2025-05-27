@@ -3,6 +3,7 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
 
 <div class="form-container">
     <h2 class="form-title">Iniciar Sesión</h2>
@@ -63,6 +64,8 @@
                 {
                     await LocalStorage.SetItemAsync("userId", resultado.Id);
                     await LocalStorage.SetItemAsync("token", resultado.Token);
+                    var custom = (CustomAuthStateProvider)AuthStateProvider;
+                    await custom.MarkAsAuthenticatedAsync(resultado.Id, resultado.Token);
                     NavigationManager.NavigateTo("/");
                 }
             }

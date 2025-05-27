@@ -162,7 +162,7 @@
                 return;
             }
 
-            cliente = await Http.GetFromJsonAsync<ClienteModel>($"api/cliente/{userId}");
+            cliente = await Http.GetFromJsonAsync<ClienteModel>($"api/Clientes/{userId}");
             pedidos = await Http.GetFromJsonAsync<List<PedidoModel>>($"api/pedido/cliente/{userId}");
         }
         catch (Exception ex)
