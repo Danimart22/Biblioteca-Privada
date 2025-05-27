@@ -23,12 +23,27 @@ namespace APIBibliotecaPrivada.Controllers
         }
         [HttpPost]
         [Route("Nuevo")]
-        public IActionResult Post(Libro libro)
+        public async Task<IActionResult> Post([FromBody] Libro libro)
         {
-            Task<bool> result = _libroNegocio.guardarLibro(libro);
-            Console.WriteLine("Libro insertado");
-            _logger.LogInformation(" Insertado Exitosamente ");
-            return Ok();
+            try
+            {
+                bool result = await _libroNegocio.guardarLibro(libro);
+                if (result)
+                {
+                    _logger.LogInformation("Libro insertado exitosamente");
+                    return Ok();
+                }
+                else
+                {
+                    _logger.LogWarning("No se pudo insertar el libro");
+                    return BadRequest("No se pudo insertar el libro");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error al insertar el libro: {ex.Message}");
+                return StatusCode(500, "Error interno del servidor");
+            }
         }
         [HttpPut]
         [Route("Actualización")]
