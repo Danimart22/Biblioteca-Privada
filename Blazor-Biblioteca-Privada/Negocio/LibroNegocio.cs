@@ -42,8 +42,7 @@ namespace BlazorApp.Negocio
         }
         public async Task<bool> guardarLibro(Libro libro)
         {
-            libro.id = 123;
-            libro.stock = 1;
+           
             try
             {
                 _logger.LogInformation($"Iniciando la llamada para guardar el libro: {JsonSerializer.Serialize(libro)}");
