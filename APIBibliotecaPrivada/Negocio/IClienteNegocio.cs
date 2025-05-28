@@ -13,5 +13,7 @@ namespace APIBibliotecaPrivada.Negocio
         Task<Boolean> guardarCliente(Cliente cliente);
         Task<Boolean> actualizarCliente(Cliente cliente);
         Task<Boolean> eliminarCliente(int id);
+        Task<bool> RecargarSaldo(int clienteId, decimal monto);
+        Task<bool> DescontarSaldo(int clienteId, decimal monto);
     }
 }

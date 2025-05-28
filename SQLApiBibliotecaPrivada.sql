@@ -17,11 +17,12 @@ CREATE TABLE Cliente (
 );
 
 CREATE TABLE IF NOT EXISTS Pedido(
-ID INT PRIMARY KEY,
+ID INT AUTO_INCREMENT PRIMARY KEY,
 IDCliente int,
 Libros varchar(100),
 Total decimal(10,2),
 Fecha datetime,
+Estado varchar(20),
 foreign key(IDCliente) references Cliente(ID)
 );
 

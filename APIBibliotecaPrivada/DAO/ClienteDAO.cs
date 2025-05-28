@@ -128,5 +128,24 @@ namespace APIBibliotecaPrivada.DAO
 				}
 				return result > 0;
 			}
+
+			public async Task<bool> RecargarSaldo(int clienteId, decimal monto)
+			{
+				int result = 0;
+				try
+				{
+					var db = dbConnection();
+					string query = "UPDATE Cliente SET Saldo = Saldo + @Monto WHERE ID = @ClienteId";
+					result = await db.ExecuteAsync(query, new { ClienteId = clienteId, Monto = monto });
+					_logger.LogInformation($"Saldo recargado para el cliente con ID {clienteId}");
+					return result > 0;
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError($"Error al recargar saldo para el cliente con ID {clienteId}: " + ex);
+					Console.WriteLine("Error: " + ex.Message);
+				}
+				return result > 0;
+			}
 		}
 }

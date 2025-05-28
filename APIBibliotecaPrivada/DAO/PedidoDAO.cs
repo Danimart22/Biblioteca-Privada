@@ -42,7 +42,7 @@ namespace APIBibliotecaPrivada.DAO
             try
             {
                 var db = dbConnection();
-                result = await db.ExecuteAsync(PedidoDAOHelper.guardarPedidos, new { pedido.Id, pedido.Usuario, pedido.Libros, pedido.Total, pedido.Fecha });
+                result = await db.ExecuteAsync(PedidoDAOHelper.guardarPedidos, new { pedido.IdCliente, pedido.Libros, pedido.Total, pedido.Fecha, pedido.Estado });
                 _logger.LogInformation("Pedido insertado exitosamente");
                 return result > 0;
             }
@@ -59,7 +59,7 @@ namespace APIBibliotecaPrivada.DAO
             try
             {
                 var db = dbConnection();
-                result = await db.ExecuteAsync(ClienteDAOHelper.actualizarCliente, new {pedido.Id, pedido.Usuario, pedido.Libros, pedido.Total, pedido.Fecha });
+                result = await db.ExecuteAsync(ClienteDAOHelper.actualizarCliente, new {pedido.Id, pedido.IdCliente, pedido.Libros, pedido.Total, pedido.Fecha });
                 _logger.LogInformation($"Pedido con ID {pedido.Id} actualizado correctamente");
                 return result > 0;  
             }

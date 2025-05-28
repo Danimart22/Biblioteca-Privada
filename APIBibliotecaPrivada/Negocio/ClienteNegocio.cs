@@ -44,5 +44,15 @@ namespace APIBibliotecaPrivada.Negocio
         {
             return await _clienteDAO.eliminarCliente(id);
         }
+
+        public async Task<bool> RecargarSaldo(int clienteId, decimal monto)
+        {
+            return await _clienteDAO.RecargarSaldo(clienteId, monto);
+        }
+
+        public async Task<bool> DescontarSaldo(int clienteId, decimal monto)
+        {
+            return await _clienteDAO.RecargarSaldo(clienteId, -monto);
+        }
     }
 }

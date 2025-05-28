@@ -11,6 +11,7 @@ namespace APIBibliotecaPrivada.DAO
 		Task<Cliente> obtenerClientePorEmail(string email);
 		Task<Boolean> guardarCliente(Cliente cliente);
 		Task<Boolean> actualizarCliente(Cliente cliente);
-		Task<Boolean> eliminarCliente(int id);	
+		Task<Boolean> eliminarCliente(int id);
+		Task<bool> RecargarSaldo(int clienteId, decimal monto);
 	}
 }

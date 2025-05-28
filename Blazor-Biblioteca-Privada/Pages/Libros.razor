@@ -79,9 +79,14 @@
 					<span>$@totalPedido.ToString("F2")</span>
 				</div>
 				<button class="btn btn-success" @onclick="RealizarPedido">Realizar Pedido</button>
+				@if (!string.IsNullOrEmpty(mensajeCompra))
+				{
+					<div class="alert alert-success">@mensajeCompra</div>
+				}
 			</div>
 		}
 	}
+	<button class="btn btn-info" @onclick="IrAPedidos">Ver mis pedidos</button>
 </div>
 
 <style>
@@ -207,6 +212,7 @@
 	private Dictionary<int, int> cantidades = new Dictionary<int, int>();
 	private string searchTerm = "";
 	private double totalPedido => librosPedido.Sum(l => l.precio * l.cantidadPedida);
+	private string mensajeCompra = string.Empty;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -288,6 +294,11 @@
 		librosPedido.RemoveAll(l => l.id == libro.id);
 	}
 
+	private void IrAPedidos()
+	{
+		NavigationManager.NavigateTo("/pedidos");
+	}
+
 	private async Task RealizarPedido()
 	{
 		try
@@ -298,7 +309,6 @@
 				NavigationManager.NavigateTo("/login");
 				return;
 			}
-
 			var pedido = new Pedido
 			{
 				IdCliente = userId,
@@ -306,18 +316,22 @@
 				Total = totalPedido,
 				Fecha = DateTime.Now
 			};
-
-			var response = await Http.PostAsJsonAsync("api/pedido", pedido);
+			var response = await Http.PostAsJsonAsync("api/pedidos/nuevo", pedido);
 			if (response.IsSuccessStatusCode)
 			{
+				mensajeCompra = "¡Compra exitosa!";
 				librosPedido.Clear();
 				cantidades.Clear();
 				await OnInitializedAsync();
 			}
+			else
+			{
+				mensajeCompra = "Error al realizar la compra.";
+			}
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine($"Error al realizar el pedido: {ex.Message}");
+			mensajeCompra = $"Error al realizar el pedido: {ex.Message}";
 		}
 	}
 

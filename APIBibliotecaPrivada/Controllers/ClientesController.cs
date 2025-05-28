@@ -115,6 +115,18 @@ namespace APIBibliotecaPrivada.Controllers
             }
             return NotFound($"Cliente con ID {id} no encontrado");
         }
+
+        [HttpPost("recargar-saldo")]
+        public async Task<IActionResult> RecargarSaldo([FromBody] RecargaSaldoDTO dto)
+        {
+            var result = await _clienteNegocio.RecargarSaldo(dto.ClienteId, dto.Monto);
+            if (result)
+            {
+                var cliente = await _clienteNegocio.obtenerClientePorId(dto.ClienteId);
+                return Ok(cliente.Saldo);
+            }
+            return BadRequest("No se pudo recargar el saldo");
+        }
     }
 
     public class LoginRequest

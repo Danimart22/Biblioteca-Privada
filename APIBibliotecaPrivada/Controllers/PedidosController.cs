@@ -9,10 +9,12 @@ namespace APIBibliotecaPrivada.Controllers
     public class PedidosController : ControllerBase
     {
         private readonly IPedidoNegocio _PedidoNegocio;
+        private readonly IClienteNegocio _clienteNegocio;
         private readonly ILogger<WeatherForecastController> _logger;
-        public PedidosController(IPedidoNegocio pedidoNegocio, ILogger<WeatherForecastController> logger)
+        public PedidosController(IPedidoNegocio pedidoNegocio, IClienteNegocio clienteNegocio, ILogger<WeatherForecastController> logger)
         {
             _PedidoNegocio = pedidoNegocio;
+            _clienteNegocio = clienteNegocio;
             _logger = logger;
         }
         [HttpGet]
@@ -23,12 +25,21 @@ namespace APIBibliotecaPrivada.Controllers
         }
         [HttpPost]
         [Route("Nuevo")]
-        public IActionResult Post(Pedido pedido)
+        public async Task<IActionResult> Post([FromBody] Pedido pedido)
         {
-            Task<bool> result = _PedidoNegocio.guardarPedidos(pedido);
-            Console.WriteLine("Pedido insertado");
-            _logger.LogInformation(" Insertado Exitosamente ");
-            return Ok();
+            // Descontar saldo
+            var descuento = await _clienteNegocio.DescontarSaldo(pedido.IdCliente, (decimal)pedido.Total);
+            if (!descuento)
+            {
+                return BadRequest("No se pudo descontar el saldo del cliente");
+            }
+            pedido.Estado = "Comprado";
+            var result = await _PedidoNegocio.guardarPedidos(pedido);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("No se pudo guardar el pedido");
         }
         [HttpPut]
         [Route("Actualización")]
