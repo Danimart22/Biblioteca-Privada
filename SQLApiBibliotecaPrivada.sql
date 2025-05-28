@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Libros (
     Precio DECIMAL(10,2) NOT NULL,
     Stock INT NOT NULL
 );
-DROP TABLE IF EXISTS Cliente;
+
 CREATE TABLE Cliente (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
@@ -44,7 +44,6 @@ INSERT INTO Pedido (ID, IDCliente, Libros, Total, Fecha) VALUES
 (1, 1, '1,2', 35.49, NOW()),
 (2, 2, '3', 15.50, NOW()),
 (3, 3, '2,3', 28.25, NOW());
-
 INSERT INTO Pago (ID, IDPedido, Monto, MetodoPago, Fecha, NumeroTarjeta) VALUES
 (1,1, 35.49, 'Tarjeta', NOW(), '1234-5678-9012-3456'),
 (2,2, 15.50, 'Efectivo', NOW(), NULL),
