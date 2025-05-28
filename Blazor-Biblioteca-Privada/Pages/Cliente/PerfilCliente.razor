@@ -37,18 +37,29 @@
             <div class="info-group">
                 <label class="info-label">Saldo</label>
                 <p class="info-value">$@cliente.Saldo.ToString("F2")</p>
+                <button class="btn-primary" @onclick="MostrarInputRecarga">Recargar saldo</button>
+                @if (mostrarInputRecarga)
+                {
+                    <input type="number" min="1" @bind="montoRecarga" placeholder="Monto a recargar" />
+                    <button class="btn-primary" @onclick="RecargarSaldo">Confirmar</button>
+                    @if (!string.IsNullOrEmpty(mensajeRecarga))
+                    {
+                        <span>@mensajeRecarga</span>
+                    }
+                }
             </div>
 
             <div class="button-group">
                 <button class="btn-secondary" @onclick="CerrarSesion">Cerrar Sesión</button>
                 <button class="btn-primary" @onclick="() => EditarPerfil(cliente.Id)">Editar Perfil</button>
                 <a href="/" class="btn-secondary">Regresar</a>
+                <button class="btn-info" @onclick="MostrarPedidos">Pedidos</button>
             </div>
         </div>
 
-        @if (pedidos != null && pedidos.Any())
+        @if (mostrarPedidos && pedidos != null && pedidos.Any())
         {
-            <h3 class="section-title">Historial de Pedidos</h3>
+            <h3 class="section-title">Mis Pedidos</h3>
             <div class="pedidos-list">
                 @foreach (var pedido in pedidos)
                 {
@@ -56,6 +67,7 @@
                         <div class="pedido-header">
                             <span class="pedido-fecha">@pedido.Fecha.ToString("dd/MM/yyyy HH:mm")</span>
                             <span class="pedido-total">$@pedido.Total.ToString("F2")</span>
+                            <span class="pedido-estado">@pedido.Estado</span>
                         </div>
                         <p class="pedido-libros">@pedido.Libros</p>
                     </div>
@@ -198,6 +210,10 @@
     private List<PedidoModel>? pedidos;
     private string? mensajeError;
     private bool isLoading = true;
+    private bool mostrarInputRecarga = false;
+    private double montoRecarga = 0;
+    private string mensajeRecarga = string.Empty;
+    private bool mostrarPedidos = false;
 
     private class ClienteModel
     {
@@ -213,6 +229,7 @@
         public string Libros { get; set; } = string.Empty;
         public double Total { get; set; }
         public DateTime Fecha { get; set; }
+        public string Estado { get; set; } = string.Empty;
     }
 
     protected override async Task OnInitializedAsync()
@@ -263,5 +280,37 @@
         {
             mensajeError = $"Error al cerrar sesión: {ex.Message}";
         }
+    }
+
+    private void MostrarInputRecarga()
+    {
+        mostrarInputRecarga = true;
+        mensajeRecarga = string.Empty;
+    }
+
+    private async Task RecargarSaldo()
+    {
+        if (montoRecarga <= 0 || cliente == null)
+        {
+            mensajeRecarga = "Ingrese un monto válido.";
+            return;
+        }
+        var response = await Http.PostAsJsonAsync("api/Clientes/recargar-saldo", new { ClienteId = cliente.Id, Monto = montoRecarga });
+        if (response.IsSuccessStatusCode)
+        {
+            var nuevoSaldo = await response.Content.ReadFromJsonAsync<double>();
+            cliente.Saldo = nuevoSaldo;
+            mensajeRecarga = "¡Recarga exitosa!";
+            mostrarInputRecarga = false;
+        }
+        else
+        {
+            mensajeRecarga = "Error al recargar saldo.";
+        }
+    }
+
+    private void MostrarPedidos()
+    {
+        mostrarPedidos = !mostrarPedidos;
     }
 } 

@@ -18,6 +18,8 @@ builder.Services.AddScoped<ILibroNegocio, LibroNegocio>();
 builder.Services.AddSingleton<ILibroDAO, LibroDAO>();
 builder.Services.AddScoped<IClienteNegocio, ClienteNegocio>();
 builder.Services.AddSingleton<IClienteDAO, ClienteDAO>();
+builder.Services.AddScoped<IPedidoNegocio, PedidoNegocio>();
+builder.Services.AddSingleton<IPedidoDAO, PedidoDAO>();
 
 builder.Services.AddCors(options =>
 {
