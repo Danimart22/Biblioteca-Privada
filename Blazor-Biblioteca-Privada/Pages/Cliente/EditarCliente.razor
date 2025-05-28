@@ -2,6 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
 
 <div class="form-container">
     <h2 class="form-title">Editar Perfil</h2>
@@ -11,6 +12,13 @@
     {
         <div class="form-error">
             @mensajeError
+        </div>
+    }
+
+    @if (mensajeExito != null)
+    {
+        <div class="form-success">
+            @mensajeExito
         </div>
     }
 
@@ -56,15 +64,52 @@
 
             <div class="button-group">
                 <button type="button" class="btn-secondary" @onclick="Cancelar">Cancelar</button>
-                <button type="submit" class="btn-primary">Guardar Cambios</button>
+                <button type="submit" class="btn-primary" disabled="@isLoading">
+                    @if (isLoading)
+                    {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span>Guardando...</span>
+                    }
+                    else
+                    {
+                        <span>Guardar Cambios</span>
+                    }
+                </button>
             </div>
         </EditForm>
     }
     else
     {
-        <p>Cargando...</p>
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
     }
 </div>
+
+<style>
+    .form-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 0.25rem;
+    }
+
+    .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+    }
+
+    .button-group button:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+</style>
 
 @code {
     [Parameter]
@@ -74,8 +119,10 @@
     private string nuevaClave = string.Empty;
     private string confirmarClave = string.Empty;
     private string? mensajeError;
+    private string? mensajeExito;
     private string? errorClave;
     private string? errorConfirmacion;
+    private bool isLoading = false;
 
     private class ClienteModel
     {
@@ -96,7 +143,21 @@
     {
         try
         {
-            var response = await Http.GetFromJsonAsync<ClienteModel>($"api/cliente/{Id}");
+            var token = await LocalStorage.GetItemAsync<string>("token");
+            if (string.IsNullOrEmpty(token))
+            {
+                NavigationManager.NavigateTo("/login");
+                return;
+            }
+
+            var userId = await LocalStorage.GetItemAsync<int>("userId");
+            if (userId != Id)
+            {
+                NavigationManager.NavigateTo("/perfil");
+                return;
+            }
+
+            var response = await Http.GetFromJsonAsync<ClienteModel>($"api/Clientes/{Id}");
             if (response != null)
             {
                 cliente = response;
@@ -115,6 +176,11 @@
 
     private async Task GuardarCambios()
     {
+        mensajeError = null;
+        mensajeExito = null;
+        errorClave = null;
+        errorConfirmacion = null;
+
         if (!string.IsNullOrEmpty(nuevaClave))
         {
             if (nuevaClave.Length < 6)
@@ -132,6 +198,8 @@
 
         try
         {
+            isLoading = true;
+
             var clienteActualizado = new
             {
                 cliente?.Id,
@@ -141,9 +209,11 @@
                 cliente?.Saldo
             };
 
-            var response = await Http.PutAsJsonAsync($"api/cliente/{Id}", clienteActualizado);
+            var response = await Http.PutAsJsonAsync("api/Clientes/Actualización", clienteActualizado);
             if (response.IsSuccessStatusCode)
             {
+                mensajeExito = "Perfil actualizado correctamente";
+                await Task.Delay(2000); // Esperar 2 segundos antes de redirigir
                 NavigationManager.NavigateTo("/perfil");
             }
             else
@@ -155,6 +225,10 @@
         catch (Exception ex)
         {
             mensajeError = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 

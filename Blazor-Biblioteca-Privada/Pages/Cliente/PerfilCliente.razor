@@ -13,7 +13,15 @@
         </div>
     }
 
-    @if (cliente != null)
+    @if (isLoading)
+    {
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+        </div>
+    }
+    else if (cliente != null)
     {
         <div class="profile-info">
             <div class="info-group">
@@ -40,28 +48,20 @@
 
         @if (pedidos != null && pedidos.Any())
         {
-            <div class="pedidos-section">
-                <h3 class="section-title">Mis Pedidos</h3>
-                <div class="pedidos-list">
-                    @foreach (var pedido in pedidos)
-                    {
-                        <div class="pedido-card">
-                            <div class="pedido-header">
-                                <span class="pedido-fecha">@pedido.Fecha.ToString("dd/MM/yyyy")</span>
-                                <span class="pedido-total">Total: $@pedido.Total.ToString("F2")</span>
-                            </div>
-                            <div class="pedido-libros">
-                                <p>Libros: @pedido.Libros</p>
-                            </div>
+            <h3 class="section-title">Historial de Pedidos</h3>
+            <div class="pedidos-list">
+                @foreach (var pedido in pedidos)
+                {
+                    <div class="pedido-card">
+                        <div class="pedido-header">
+                            <span class="pedido-fecha">@pedido.Fecha.ToString("dd/MM/yyyy HH:mm")</span>
+                            <span class="pedido-total">$@pedido.Total.ToString("F2")</span>
                         </div>
-                    }
-                </div>
+                        <p class="pedido-libros">@pedido.Libros</p>
+                    </div>
+                }
             </div>
         }
-    }
-    else
-    {
-        <p>Cargando...</p>
     }
 </div>
 
@@ -71,6 +71,7 @@
         padding: 1.5rem;
         border-radius: 8px;
         margin-bottom: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     .info-group {
@@ -82,6 +83,7 @@
         color: #64748b;
         font-size: 0.875rem;
         margin-bottom: 0.25rem;
+        display: block;
     }
 
     .info-value {
@@ -107,6 +109,12 @@
         border: 1px solid #e2e8f0;
         border-radius: 8px;
         padding: 1rem;
+        transition: transform 0.2s;
+    }
+
+    .pedido-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .pedido-header {
@@ -128,6 +136,60 @@
     .pedido-libros {
         color: #4b5563;
         font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-primary {
+        background-color: #2563eb;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        border: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+    }
+
+    .btn-secondary {
+        background-color: #e2e8f0;
+        color: #1e293b;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        border: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+        background-color: #cbd5e1;
+    }
+
+    .form-error {
+        background-color: #fee2e2;
+        border-color: #fecaca;
+        color: #991b1b;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 0.375rem;
     }
 </style>
 
@@ -135,6 +197,7 @@
     private ClienteModel? cliente;
     private List<PedidoModel>? pedidos;
     private string? mensajeError;
+    private bool isLoading = true;
 
     private class ClienteModel
     {
@@ -156,6 +219,13 @@
     {
         try
         {
+            var token = await LocalStorage.GetItemAsync<string>("token");
+            if (string.IsNullOrEmpty(token))
+            {
+                NavigationManager.NavigateTo("/login");
+                return;
+            }
+
             var userId = await LocalStorage.GetItemAsync<int>("userId");
             if (userId == 0)
             {
@@ -170,6 +240,10 @@
         {
             mensajeError = $"Error al cargar los datos: {ex.Message}";
         }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private void EditarPerfil(int id)
@@ -179,8 +253,15 @@
 
     private async Task CerrarSesion()
     {
-        await LocalStorage.RemoveItemAsync("userId");
-        await LocalStorage.RemoveItemAsync("token");
-        NavigationManager.NavigateTo("/login");
+        try
+        {
+            await LocalStorage.RemoveItemAsync("userId");
+            await LocalStorage.RemoveItemAsync("token");
+            NavigationManager.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al cerrar sesión: {ex.Message}";
+        }
     }
 } 
