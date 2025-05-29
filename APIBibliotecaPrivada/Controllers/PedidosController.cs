@@ -27,6 +27,8 @@ namespace APIBibliotecaPrivada.Controllers
         [Route("Nuevo")]
         public async Task<IActionResult> Post([FromBody] Pedido pedido)
         {
+            // LOG para depuración
+            Console.WriteLine($"Pedido recibido: IdCliente={pedido.IdCliente}, Libros={pedido.Libros}, Total={pedido.Total}, Fecha={pedido.Fecha}, Estado={pedido.Estado}");
             // Descontar saldo
             var descuento = await _clienteNegocio.DescontarSaldo(pedido.IdCliente, (decimal)pedido.Total);
             if (!descuento)

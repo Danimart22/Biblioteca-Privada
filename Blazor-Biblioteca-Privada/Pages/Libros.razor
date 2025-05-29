@@ -314,7 +314,8 @@
 				IdCliente = userId,
 				Libros = string.Join(", ", librosPedido.Select(l => $"{l.titulo} x{l.cantidadPedida}")),
 				Total = totalPedido,
-				Fecha = DateTime.Now
+				Fecha = DateTime.Now,
+				Estado = "Comprado"
 			};
 			var response = await Http.PostAsJsonAsync("api/pedidos/nuevo", pedido);
 			if (response.IsSuccessStatusCode)
