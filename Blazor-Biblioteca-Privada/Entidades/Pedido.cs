@@ -7,5 +7,6 @@ namespace BlazorApp.Entidades
         public string Libros { get; set; } = string.Empty;
         public double Total { get; set; }
         public DateTime Fecha { get; set; }
+        public string Estado { get; set; } = string.Empty;
     }
 } 
