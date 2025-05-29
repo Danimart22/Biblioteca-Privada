@@ -234,33 +234,39 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        if (string.IsNullOrEmpty(token))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+        var userId = await LocalStorage.GetItemAsync<int>("userId");
+        if (userId == 0)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
         try
         {
-            var token = await LocalStorage.GetItemAsync<string>("token");
-            if (string.IsNullOrEmpty(token))
-            {
-                NavigationManager.NavigateTo("/login");
-                return;
-            }
-
-            var userId = await LocalStorage.GetItemAsync<int>("userId");
-            if (userId == 0)
-            {
-                NavigationManager.NavigateTo("/login");
-                return;
-            }
-
             cliente = await Http.GetFromJsonAsync<ClienteModel>($"api/Clientes/{userId}");
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"No se pudo cargar el perfil: {ex.Message}";
+        }
+
+        try
+        {
             pedidos = await Http.GetFromJsonAsync<List<PedidoModel>>($"api/pedido/cliente/{userId}");
         }
         catch (Exception ex)
         {
-            mensajeError = $"Error al cargar los datos: {ex.Message}";
+            pedidos = new();
         }
-        finally
-        {
-            isLoading = false;
-        }
+
+        isLoading = false;
     }
 
     private void EditarPerfil(int id)
